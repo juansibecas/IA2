@@ -1,3 +1,4 @@
+import math
 def heuristica(actual, final): #función heuristica
     h=0
     for x in range(len(actual)):
