@@ -1,6 +1,6 @@
 import numpy as np
 class Almacen:
-    def __init__(self,columnas,filas):
+    def __init__(self,filas,columnas):
         self.columnas=columnas
         self.filas=filas
         self.pasillo=[]
@@ -9,8 +9,8 @@ class Almacen:
         self.y=[]
         self.almacen=np.zeros((filas,columnas))
 
-    def crear_pasillo(self):
-        px=0
+    def crear_pasillo(self): #Funcion para crear el pasillo el 5 y 3 son porque tendremos pasillo cada 5 filas
+        px=0                 # y cada 3 columnas.
         py=0
         while py <self.filas:
             for j in range(self.columnas):
@@ -22,10 +22,9 @@ class Almacen:
                     self.pasillo.append([i,px])
             px+=3
         return self.pasillo
-    def crear_estante(self):
+    def crear_estante(self): #Funcion para crear las estaterias, donde no tenemos pasillo es una estanteria
         for i in range(self.filas):
             for j in range(self.columnas):
                 if [i,j] not in self.pasillo:
                     self.estante.append([i,j])
-        print(self.pasillo)
         return self.estante
