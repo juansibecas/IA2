@@ -29,13 +29,14 @@ class Aestrella:
         jj=-1
         for a in range(len(vecinos)): #borramos los que sean estanterias, ya que no pueden ir ahi. 
             jj+=1
-            if vecinos[jj] !=self.final: #menos si el ultimo punto es una estanteria, asi puede diferenciar si llego al final
-                if vecinos[jj] in self.estante:
-                    vecinos.remove(vecinos[jj])
-                    jj-=1
-                if self.mapa[vecinos[jj][0],vecinos[jj][1]] == 1: #para que no pueda volver a un lugar en el que ya estuvo
-                    vecinos.remove(vecinos[jj])
-                    jj-=1
+            if jj <= len(vecinos)-1:
+                if vecinos[jj] !=self.final: #menos si el ultimo punto es una estanteria, asi puede diferenciar si llego al final
+                    if vecinos[jj] in self.estante:
+                        vecinos.remove(vecinos[jj])
+                        jj-=1
+                    if self.mapa[vecinos[jj][0],vecinos[jj][1]] == 1: #para que no pueda volver a un lugar en el que ya estuvo
+                        vecinos.remove(vecinos[jj])
+                        jj-=1
         return vecinos
 
     def menor(self,fnodos):#funcion para elegir la menor funcion f entre todos los nodos existentes.
@@ -48,7 +49,7 @@ class Aestrella:
                 indice=index
             index+=1
         return indice      #retorna el indice del menor valor
-
+            
     def camino(self,columna,fila): #Funcion para encontrar el menor camino.
         vecinos=[]  #guardaremos todos los vecinos de la posicion actual
         nodos=[]    #guardaremos todos las ubicaciones posibles, nodos

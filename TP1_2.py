@@ -18,7 +18,7 @@ if __name__ == '__main__':
     print("Camino recorrido: ")
     aestrella=Aestrella(inicio,final,mapa,pasillo,estante)
     camino=aestrella.camino(columnas, filas)
-    print("El menor más corto es:")
+    print("El camino más corto es:")
     print(camino)
 
 
