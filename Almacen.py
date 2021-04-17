@@ -22,9 +22,11 @@ class Almacen:
                     self.pasillo.append([i,px])
             px+=3
         return self.pasillo
-    def crear_estante(self): #Funcion para crear las estaterias, donde no tenemos pasillo es una estanteria
+    
+    def crear_estante(self): #Funcion para crear las estanterias, donde no tenemos pasillo es una estanteria
         for i in range(self.filas):
             for j in range(self.columnas):
                 if [i,j] not in self.pasillo:
                     self.estante.append([i,j])
+                    self.almacen[i,j] = 2 #JP: le meti un 2 para que se vea un poco mejor el mapita
         return self.estante

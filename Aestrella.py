@@ -13,15 +13,21 @@ class Aestrella:
         h2=pow((actual[1]-self.final[1]),2)
         h= (math.sqrt(h1 + h2))*2 #multiplicamos por 2 para que tenga mas peso frente a la g. 
         return h
+
+    def h_manhattan(self, actual, final): #heuristica manhattan, la agrego por si pinta usarla
+        v = []
+        for i in range(len(actual)):
+            v.append(abs(actual[i] - final[i]))
+        return sum(v)
     
-    def encuentra_vecinos(self,actual, columna, fila): #función para encontrar a los vecinos
+    def encuentra_vecinos(self,actual, columna, fila): #función para encontrar a los vecinos #JP: uatafa bro
         ii=(int(actual[0]))#indices en i
         ij=(int(actual[1]))#indices en j
         vecinos=[[ii+1,ij],[ii-1,ij],[ii,ij+1],[ii,ij-1]]
         if ii-1 < 0 : #Borramos los que estan fuera de los limites
             vecinos.remove([ii-1,ij])
         if ii+1 >=fila :
-            vecinos.remove([ii+1,ij])
+            vecinos.remove([ii+1,ij])  
         if ij-1 < 0 :
             vecinos.remove([ii,ij-1])
         if ij+1 >=columna :
@@ -38,18 +44,19 @@ class Aestrella:
                         vecinos.remove(vecinos[jj])
                         jj-=1
         return vecinos
-
+    """
     def menor(self,fnodos):#funcion para elegir la menor funcion f entre todos los nodos existentes.
+    #JP: man para esto podes hacer indice = fnodos.index(min(fnodos))
         index=0
         indice=index
         menor=fnodos[0]
-        for valor in fnodos:
+        for valor in fnodos: 
             if valor < menor:
                 menor= valor
                 indice=index
             index+=1
         return indice      #retorna el indice del menor valor
-            
+    """        
     def camino(self,columna,fila): #Funcion para encontrar el menor camino.
         vecinos=[]  #guardaremos todos los vecinos de la posicion actual
         nodos=[]    #guardaremos todos las ubicaciones posibles, nodos
@@ -68,7 +75,7 @@ class Aestrella:
                 f=g+self.h(vecinos[j])      #calculamos la funcion f para cada vecino, g vale una unidad por cada movimiento
                 fnodos.append(f)
                 nodos.append(vecinos[j])
-            index=self.menor(fnodos)        
+            index=fnodos.index(min(fnodos)) #JP: devuelve el indice del menor costo, reemplazo de la funcion self.menor    
             actual=nodos[index]             #actualizamos el valor actual 
             fnodos.pop(index)               #eliminamos el valor actual de los nodos y de fnodos para que no se pueda volver a el 
             nodos.pop(index)               
@@ -77,6 +84,6 @@ class Aestrella:
             g+=1                            #valor de la funcion g, es una unidad
             camino.append(actual)
             self.mapa[actual[0],actual[1]]=1
-            print(self.mapa)
+        print(self.mapa) #JP: te lo corri para que no se printee el mapa 18 veces
         return camino
 
