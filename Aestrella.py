@@ -1,5 +1,6 @@
 import math
 import numpy as np
+from copy import copy
 class Aestrella:
     def __init__(self,ini,final,mapa,pasillo,estante):
         self.ini = ini
@@ -8,19 +9,19 @@ class Aestrella:
         self.pasillo = pasillo
         self.estante = estante
 
-    def h(self,actual): #función heuristica, calculamos la distancia euclidiana entre dos puntos.
-        h1=pow((actual[0]-self.final[0]),2)
-        h2=pow((actual[1]-self.final[1]),2)
-        h= (math.sqrt(h1 + h2))*2 #multiplicamos por 2 para que tenga mas peso frente a la g. 
-        return h
+    def h_euclid(self, actual, final, k): #función heuristica, calculamos la distancia euclidiana entre dos puntos.
+        v = []  #la cambie para que sea mas general y se pueda volver a usar
+        for i in range(len(actual)):
+            v.append(pow((actual[i]-final[i]),2))
+        return math.sqrt(sum(v))*k #multiplicamos por 2 para que tenga mas peso frente a la g. 
 
-    def h_manhattan(self, actual, final): #heuristica manhattan, la agrego por si pinta usarla
+    def h_manhattan(self, actual, final): #heuristica manhattan
         v = []
         for i in range(len(actual)):
             v.append(abs(actual[i] - final[i]))
         return sum(v)
     
-    def encuentra_vecinos(self,actual, columna, fila): #función para encontrar a los vecinos #JP: uatafa bro
+    def encuentra_vecinos(self,actual, columna, fila): #función para encontrar a los vecinos
         ii=(int(actual[0]))#indices en i
         ij=(int(actual[1]))#indices en j
         vecinos=[[ii+1,ij],[ii-1,ij],[ii,ij+1],[ii,ij-1]]
@@ -44,46 +45,57 @@ class Aestrella:
                         vecinos.remove(vecinos[jj])
                         jj-=1
         return vecinos
-    """
-    def menor(self,fnodos):#funcion para elegir la menor funcion f entre todos los nodos existentes.
-    #JP: man para esto podes hacer indice = fnodos.index(min(fnodos))
-        index=0
-        indice=index
-        menor=fnodos[0]
-        for valor in fnodos: 
-            if valor < menor:
-                menor= valor
-                indice=index
-            index+=1
-        return indice      #retorna el indice del menor valor
-    """        
+      
     def camino(self,columna,fila): #Funcion para encontrar el menor camino.
         vecinos=[]  #guardaremos todos los vecinos de la posicion actual
-        nodos=[]    #guardaremos todos las ubicaciones posibles, nodos
-        fnodos=[]   #guardaremos las funciones f de todos los nodos, para luego elegir la menor
+        nodos=[]    #guardaremos todos los nodos - ver class Nodo
         flag=1
         f=0
-        camino=[]
-        actual=self.ini #posicion actual. 
-        camino.append(actual)
-        self.mapa[actual[0],actual[1]]=1 #Para tener un 1 en los lugares donde va pasando.
-        print(self.mapa)
+        prev = Nodo(self.ini, 0, 0, 0)
         g=0
         while flag:
-            vecinos=self.encuentra_vecinos(actual,columna, fila)
+            g+=1 #valor de la funcion g, es una unidad
+            vecinos=self.encuentra_vecinos(prev.pos,columna, fila)
             for j in range(len(vecinos)):
-                f=g+self.h(vecinos[j])      #calculamos la funcion f para cada vecino, g vale una unidad por cada movimiento
-                fnodos.append(f)
-                nodos.append(vecinos[j])
-            index=fnodos.index(min(fnodos)) #JP: devuelve el indice del menor costo, reemplazo de la funcion self.menor    
-            actual=nodos[index]             #actualizamos el valor actual 
-            fnodos.pop(index)               #eliminamos el valor actual de los nodos y de fnodos para que no se pueda volver a el 
-            nodos.pop(index)               
-            if self.final in vecinos:       #si el final esta dentro de los vecinos, termina el programa. Llegamos
+                f=g+self.h_manhattan(vecinos[j], self.final)      #calculamos la funcion f para cada vecino, g vale una unidad por cada movimiento
+                nodos.append(Nodo(vecinos[j], f, g, prev))
+            
+            nodos.sort(key=sort_by_f) #se ordena la lista de nodos de menor a mayor segun f
+            if nodos[0].nivel < g:
+                g = nodos[0].nivel #si el algoritmo vuelve a una rama anterior, vuelve el valor de g al original
+                
+            
+            prev = copy(nodos[0])
+            nodos.pop(0)                    #eliminamos el valor actual de los nodos para que no se pueda volver a el               
+            if self.final in vecinos:       #si el final esta dentro de los vecinos, se mueve a el y termina el programa. Llegamos
+                prev = Nodo(self.final, 0, 0, copy(prev))    
                 flag=0
-            g+=1                            #valor de la funcion g, es una unidad
-            camino.append(actual)
-            self.mapa[actual[0],actual[1]]=1
+        
+        camino = []
+        camino = prev.connect_path(camino) 
+        camino.reverse()
+        
+        for i in camino:
+            self.mapa[i[0], i[1]] = 1 #1 es por donde pasa
         print(self.mapa) #JP: te lo corri para que no se printee el mapa 18 veces
+        
         return camino
 
+
+
+def sort_by_f(nodo):
+    return nodo.f
+
+class Nodo:
+    def __init__(self, pos, f, nivel, prev):  
+        self.pos = pos
+        self.f = f
+        self.nivel = nivel #es el valor de g, los espacios recorridos hasta llegar aca
+        self.prev = prev #guarda el nodo previo
+    
+    def connect_path(self, path): #se conecta un nodo al previo y asi sucesivamente hasta llegar al inicio del recorrido
+        path.append(self.pos)
+        if self.prev == 0:
+            return path
+        else:
+            return self.prev.connect_path(path)
