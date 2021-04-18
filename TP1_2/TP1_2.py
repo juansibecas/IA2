@@ -21,9 +21,6 @@ if __name__ == '__main__':
     inicio = crear_punto(estante, filas, columnas)
     final = crear_punto(estante, filas, columnas)
     
-    inicio = [2, 3]
-    final = [3, 0]
-    
     print("La posicion inicial es :")
     print(inicio)
     print("La posicion final es :")

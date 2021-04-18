@@ -13,7 +13,7 @@ class Aestrella:
         v = []  #la cambie para que sea mas general y se pueda volver a usar
         for i in range(len(actual)):
             v.append(pow((actual[i]-final[i]),2))
-        return math.sqrt(sum(v))*k #multiplicamos por 2 o k para que tenga mas peso frente a la g. 
+        return math.sqrt(sum(v))*k #multiplicamos por 2 para que tenga mas peso frente a la g. 
 
     def h_manhattan(self, actual, final): #heuristica manhattan
         v = []
