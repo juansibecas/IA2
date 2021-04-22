@@ -24,7 +24,7 @@ def run():
     dim = 3
     angle = 360
     
-    t0 = time.time()
+    t0 = time.time()#medicion de tiempo para ver cuanto tarda
     
     espacio = Espacio(angle, dx, dim)
     espacio.create_obstacles(90, 30)
