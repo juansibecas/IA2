@@ -5,8 +5,6 @@ class Almacen:
         self.filas=filas
         self.pasillo=[]
         self.estante=[]
-        self.x=[]
-        self.y=[]
         self.almacen=np.zeros((filas,columnas))
 
     def crear_pasillo(self): #Funcion para crear el pasillo el 5 y 3 son porque tendremos pasillo cada 5 filas
