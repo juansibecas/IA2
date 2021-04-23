@@ -9,7 +9,7 @@ def creat_prod(shelf, rows, columns): #func para que los puntos inicial y final 
     else:
         return product
 
-if _name_=='__main__':
+if __name__=='__main__':
     columns = 10
     rows = 10
     warehouse = Almacen(rows,columns)
@@ -17,7 +17,7 @@ if _name_=='__main__':
     k = 5 #cantidad de productos en la lista de pick
     initial_picks = []    
    
-    for i in range k:
+    for i in range(k):
         initial_picks.append(creat_prod(shelf,rows,columns))
     temp_ini = 100
     temp_fin = .1
