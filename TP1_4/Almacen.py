@@ -7,10 +7,10 @@ class Almacen:
         self.estante=[]
         self.almacen=np.zeros((filas,columnas))
 
-    def crear_pasillo(self): #Funcion para crear el pasillo el 5 y 3 son porque tendremos pasillo cada 5 filas
+    def crear_pasillo(self): #Funcion para crear el pasillo el 6 y 3 son porque tendremos pasillo cada 6 filas
         px=0                 # y cada 3 columnas.
         py=0
-        dy=5
+        dy=6
         dx=3
         while py <self.filas:
             for j in range(self.columnas):

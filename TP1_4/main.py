@@ -2,22 +2,22 @@ from Almacen import Almacen
 from Aestrella import Aestrella
 from Annealing import Annealing
 from Orders import Order
-from Individuals import Individual
+from Gen import Gen
 import random
 
-def orders():
+def orders(): #Funcion para leer el archivo de ordenes y separar cada orden
     orders=[]
     lines=[]
     f=open("orders.txt")
     line=(f.readline())
     orders.append(Order(line))
     i=0
-    while line != '':
-        if line == '\n':
-            orders[i].setorder(lines)
+    while line != '': #Para indicar que estamos en el fin de la lista
+        if line == '\n': #Si solo tenemos \n pasamos a la siguiente orden
+            orders[i].setorder(lines) #guardamos en la orden las lineas que teniamos anteriormente y luego las limpiamos
             i+=1
             line=(f.readline())
-            orders.append(Order(line))
+            orders.append(Order(line))#El primer elemento del archivo es el orden del pedido. lo guardamos aparte
             lines=[]
         else:
             line=f.readline()
@@ -27,24 +27,19 @@ def orders():
     #for j in range(i):
         #orders[j].getorder()
 
-def individuals(shelves,n):
-    i=len(shelves)
-    individuals=[]
-    for j in range(n):
-        individuals.append(Individual(random.sample(range(0,i),i)))
-        #individuals[j].getind()
 
 if __name__ == "__main__":
     max_it = 1000 
-    columns=13
-    rows=16
+    columns=16
+    rows=13
     n=10
     store = Almacen(rows,columns)
     map = store.almacen
-    shelves=store.crear_pasillo()
-    for i in range(len(shelves)):
+    hal=store.crear_pasillo()
+    shelves=store.crear_estante()
+    for i in range(len(shelves)): #En la estanteria le ponemos el valor como lo tenemos en ordenes
         shelves[i]= 'P'+str(i)
-    print(shelves[6])
-    hal=store.crear_estante()
+    print(len(shelves))
     orders=orders()
-    individuals(shelves,n)
+    gen=Gen(shelves,n)
+    gen.sel_and_rep()
