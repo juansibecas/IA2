@@ -33,13 +33,13 @@ if __name__ == "__main__":
     columns=16
     rows=13
     n=10
-    warehouse = Warehouse(rows,columns)
+    warehouse = Warehouse(rows,columns,3,6)
     map = warehouse.warehouse
     aisles=warehouse.create_aisles()
     shelves=warehouse.create_shelves()
     for i in range(len(shelves)): #En la estanteria le ponemos el valor como lo tenemos en ordenes
         shelves[i]= 'P'+str(i)
-        map = warehouse.map
+    map = warehouse.map
     print(map)
     orders=orders()
     gen=Gen(shelves,n)
