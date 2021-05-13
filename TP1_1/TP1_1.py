@@ -1,52 +1,56 @@
-from Espacio import Espacio
+from Space import Space
 from Astar import Astar
 import time
 import random
 
-def crear_punto(dim, final, dx, obstacles): #func para que los puntos inicial y final no se generen en obstaculos
-    punto = []
-    for i in range(dim):    
-        punto.append(random.randrange(0, final, dx))
-    if punto in obstacles: 
-        return crear_punto(dim, final, dx, obstacles)
+def create_point(dim, final, dx, obstacles, obs_dx): #func para que los puntos inicial y final no se generen en obstaculos. igual que en delete_non_valid_neighbours
+    dim_counter=0
+    point = []
+    for n in range(dim):    
+        point.append(random.randrange(0, final, dx))
+    for obstacle in obstacles:
+        for l in range(dim):
+            if point[l] <= obstacle[l] + obs_dx*dx and point[l] >= obstacle[l] - obs_dx*dx:
+                dim_counter+=1
+            if dim_counter == dim:    
+                return create_point(dim, final, dx, obstacles, obs_dx)    
+        dim_counter=0
     else:
-        return punto
-
-
-def sort(lst):
-    return lst[0]
-
-def delete_duplicates(lst):
-    return list(set(lst)) #no se puede con listas anidadas. habria que transformarlas a tuplas
+        return point
 
 def run():
-    dx = 1
-    dim = 3
-    angle = 360
-    
-    t0 = time.time()#medicion de tiempo para ver cuanto tarda
-    
-    espacio = Espacio(angle, dx, dim)
-    espacio.create_obstacles(90, 30)
-    obstacles = espacio.obstacles
-
+    dx = 1 #discretizacion
+    dim = 6
+    angle = 360 
+    obs_n = 30 #numero de obstaculos a generar
+    obs_dx = 5 #es la mitad del ancho(por dimension) de los obstaculos
+    it=10000 #numero maximo de iteraciones
+       
+    space = Space(angle, dx, dim)
+    space.create_obstacles(obs_n, obs_dx)
+    obstacles = space.obstacles
     
     t1 = time.time()
     
-    start = crear_punto(dim, angle, dx, obstacles)
-    finish = crear_punto(dim, angle, dx, obstacles)
-    print(start, finish)
-    
-    astar = Astar(start, finish, espacio)
-    camino = astar.camino()
+    start = create_point(dim, angle, dx, obstacles, obs_dx)
+    finish = create_point(dim, angle, dx, obstacles, obs_dx)
+    print(start,"a", finish)
+
+    astar = Astar(start, finish, space, it)
+    path = astar.path()
     
     t2 = time.time()
-    print(t1-t0, t2-t1, "seconds each part")
+    print(t2-t1, "seconds")
+    lst = []
+    for i in range(dim):
+        lst.append(abs(start[i] - finish[i]))
     
-        
-    return obstacles, camino
+    print("distancia minima: ", max(lst))
+    print("distancia recorrida: ", len(path)-1)
+
+    return obstacles, path
 
 if __name__ == '__main__':
-    obstacles, camino = run()
+    obstacles, path = run()
     
     
