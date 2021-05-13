@@ -5,4 +5,6 @@ class Order:
 
     def setorder(self,products):
         self.products=products
-        
+    
+    def getorder(self):
+        print(self.products)
