@@ -11,20 +11,23 @@ def creat_prod(shelf, rows, columns): #func para que los puntos inicial y final 
 
 if __name__=='__main__':
     columns = 10
-    rows = 10
+    rows = 11
     warehouse = Almacen(rows,columns)
+    hall= warehouse.crear_pasillo()
     shelf = warehouse.crear_estante()
-    k = 5 #cantidad de productos en la lista de pick
+    n = 4 #cantidad de productos en la lista de pick
     initial_picks = []    
    
-    for i in range(k):
+    for i in range(n):
         initial_picks.append(creat_prod(shelf,rows,columns))
-    temp_ini = 100
-    temp_fin = .1
-    alph = 0.01
+    print(initial_picks)    
+    temp_ini = 5
+    temp_fin = 0.1
+    alph = 0.05
     annealing = Annealing(temp_ini,temp_fin,alph,initial_picks,rows,columns)
-    order = annealing.simulated_annealing(initial_picks)
-    picknumber = {n: i for i, n in enumerate(initial_picks)} 
+    order = list(map(tuple,annealing.simulated_annealing(initial_picks))) 
+    print(order)
+    picknumber = {(k,j): i for i, (k,j) in enumerate(initial_picks)}  
     result = list(map(picknumber.get, order))
     print("El orden adecuado de pick es: ")
     print(result)

@@ -17,6 +17,7 @@ if __name__ == '__main__':
     mapa = almacen.almacen
     pasillo=almacen.crear_pasillo()
     estante=almacen.crear_estante()
+    print(estante)
     
     inicio = crear_punto(estante, filas, columnas)
     final = crear_punto(estante, filas, columnas)

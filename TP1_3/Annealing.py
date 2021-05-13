@@ -15,8 +15,8 @@ class Annealing:
     def astar_path(self,pick_in,pick_fin):              #decidi crear un almacen en cada intervalo de 
         warehouse = Almacen(self.rows,self.columns)    #picking porque las restricciones de vecinos podian 
         warehouse_map =  warehouse.almacen              #mamar la busqueda siguiente
-        hall = warehouse.crear_pasillo
-        shelf = warehouse.crear_estante
+        hall = warehouse.crear_pasillo()
+        shelf = warehouse.crear_estante()
         astar = Aestrella(pick_in,pick_fin,warehouse_map,hall,shelf)
         return astar.camino(self.columns,self.rows)     #devuelve el camino de la busqueda entre dos productos
 
@@ -40,6 +40,7 @@ class Annealing:
         rand_neigh.insert(ind1, val2)
         rand_neigh.remove(val2)
         rand_neigh.insert(ind2, val1)
+        print (rand_neigh)
         return rand_neigh             #retorna un arreglo similar al inicial pero con una permutacion en el orden de pick
 
     def simulated_annealing(self, init_state):
@@ -56,6 +57,7 @@ class Annealing:
                 if random.uniform(0,1) < math.exp(- energy_diff/current_temp): #si es mayor pero bajo una probabilidad, lo toma
                     solution = neigh
             current_temp-=self.alph #resta a la temp una constante (funcion de varacion lineal -- puede ser exp o log tambien)
+            print(solution)
         return solution 
     
         
