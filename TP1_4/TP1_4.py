@@ -1,5 +1,5 @@
-from Almacen import Almacen
-from Aestrella import Aestrella
+from Warehouse import Warehouse
+from Astar import Astar
 from Annealing import Annealing
 from Orders import Order
 from Gen import Gen
@@ -33,10 +33,10 @@ if __name__ == "__main__":
     columns=16
     rows=13
     n=10
-    store = Almacen(rows,columns)
-    map = store.almacen
-    hal=store.crear_pasillo()
-    shelves=store.crear_estante()
+    warehouse = Warehouse(rows,columns)
+    map = warehouse.warehouse
+    aisles=warehouse.create_aisles()
+    shelves=warehouse.create_shelves()
     for i in range(len(shelves)): #En la estanteria le ponemos el valor como lo tenemos en ordenes
         shelves[i]= 'P'+str(i)
         map = warehouse.map
