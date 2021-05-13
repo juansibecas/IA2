@@ -39,7 +39,8 @@ if __name__ == "__main__":
     shelves=store.crear_estante()
     for i in range(len(shelves)): #En la estanteria le ponemos el valor como lo tenemos en ordenes
         shelves[i]= 'P'+str(i)
-    print(len(shelves))
+        map = warehouse.map
+    print(map)
     orders=orders()
     gen=Gen(shelves,n)
     gen.sel_and_rep()

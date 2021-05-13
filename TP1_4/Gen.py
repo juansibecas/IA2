@@ -23,7 +23,6 @@ class Gen:
 
     def sel_and_rep(self):
         self.set_pop()
-        print(self.population[9][98])
         #self.fitness=[(self.set_fitness(i), i) for i in self.population]
         selected=self.population
 
