@@ -10,16 +10,6 @@ def create_point(shelves, rows, columns): #func para que los puntos inicial y fi
     else:
         return point
 
-<<<<<<< HEAD
-if __name__ == '__main__':
-    columnas = 10
-    filas = 11
-    almacen = Almacen(filas,columnas)
-    mapa = almacen.almacen
-    pasillo=almacen.crear_pasillo()
-    estante=almacen.crear_estante()
-    print(estante)
-=======
 
 def run():
     columns = 16
@@ -30,7 +20,6 @@ def run():
     warehouse.create_aisles()
     shelves=warehouse.create_shelves()
     warehouse_map = warehouse.map
->>>>>>> 905defcb6912e9fc485ed3257acf80bd00d96236
     
     start = create_point(shelves, rows, columns)
     finish = create_point(shelves, rows, columns)

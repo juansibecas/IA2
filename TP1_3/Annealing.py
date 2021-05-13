@@ -14,15 +14,6 @@ class Annealing:
         self.wh_dx = dx
         self.wh_dy = dy
     
-<<<<<<< HEAD
-    def astar_path(self,pick_in,pick_fin):              #decidi crear un almacen en cada intervalo de 
-        warehouse = Almacen(self.rows,self.columns)    #picking porque las restricciones de vecinos podian 
-        warehouse_map =  warehouse.almacen              #mamar la busqueda siguiente
-        hall = warehouse.crear_pasillo()
-        shelf = warehouse.crear_estante()
-        astar = Aestrella(pick_in,pick_fin,warehouse_map,hall,shelf)
-        return astar.camino(self.columns,self.rows)     #devuelve el camino de la busqueda entre dos productos
-=======
     def astar_path(self, pick_in, pick_fin):              #decidi crear un almacen en cada intervalo de 
         warehouse = Warehouse(self.rows, self.columns, self.wh_dx, self.wh_dy)    #picking porque las restricciones de vecinos podian 
                                                           #mamar la busqueda siguiente
@@ -31,7 +22,6 @@ class Annealing:
         astar = Astar(pick_in, pick_fin, warehouse)
 
         return astar.path()     #devuelve el camino de la busqueda entre dos productos
->>>>>>> 955967fc2007dea5c92ecb29cef28f3f778a0183
 
     def get_energy(self,state):            #funcion para conseguir la energia del estado, es decir, la cantidad de nodos 
         path=[]                            #que visito en total al hacer la busqueda anidada de pj. 5 productos
@@ -46,17 +36,6 @@ class Annealing:
         val1= random.choice(rand_neighbours) 
         val2=random.choice(rand_neighbours)
         while val2 == val1:
-<<<<<<< HEAD
-            val2= random.choice(rand_neigh)        
-        ind1 = rand_neigh.index(val1)
-        ind2 = rand_neigh.index(val2)
-        rand_neigh.remove(val1)
-        rand_neigh.insert(ind1, val2)
-        rand_neigh.remove(val2)
-        rand_neigh.insert(ind2, val1)
-        print (rand_neigh)
-        return rand_neigh             #retorna un arreglo similar al inicial pero con una permutacion en el orden de pick
-=======
             val2= random.choice(rand_neighbours)        
         ind1 = rand_neighbours.index(val1)
         ind2 = rand_neighbours.index(val2)
@@ -65,7 +44,6 @@ class Annealing:
         rand_neighbours.remove(val2)
         rand_neighbours.insert(ind2, val1)
         return rand_neighbours           #retorna un arreglo similar al inicial pero con una permutacion en el orden de pick
->>>>>>> 955967fc2007dea5c92ecb29cef28f3f778a0183
 
     def simulated_annealing(self, init_state):
         current_temp= self.tempini              #temperatura inicial (alta)
