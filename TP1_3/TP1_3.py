@@ -23,16 +23,17 @@ if __name__=='__main__':
    
     for i in range(k):
         initial_picks.append(creat_prod(shelves,rows,columns))
-    
+    print(initial_picks)
     temp_ini = 100
     temp_fin = .1
     alph = 0.1
     annealing = Annealing(temp_ini, temp_fin, alph, initial_picks, rows, columns, dx, dy)
-    order_temp = annealing.simulated_annealing(initial_picks)
+    order_temp = list(map(tuple,annealing.simulated_annealing(initial_picks)))
     order = []
     init = []
         
-    picknumber = {n: i for i, n in enumerate([tuple(n) for n in initial_picks])} #con lista de tuplas funca
-    result = list(map(picknumber.get, order))
+    picknumber = {(n,j): i for i, (n,j) in enumerate(initial_picks)} #con lista de tuplas funca
+    result = list(map(picknumber.get, order_temp))
     print("El orden adecuado de pick es: ")
     print(result)
+
