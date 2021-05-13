@@ -21,21 +21,30 @@ def orders():
             lines=[]
         else:
             line=f.readline()
-            if line != '\n': lines.append(line)
+            if line != '\n':
+                line=line.rstrip('\n')
+                lines.append(line)
+    #for j in range(i):
+        #orders[j].getorder()
 
-def individuals(shelves):
-    n=len(shelves)
+def individuals(shelves,n):
+    i=len(shelves)
     individuals=[]
-    individuals.append(Individual(random.sample(range(1,n+1),n)))
+    for j in range(n):
+        individuals.append(Individual(random.sample(range(0,i),i)))
+        #individuals[j].getind()
 
-    
 if __name__ == "__main__":
     max_it = 1000 
     columns=13
     rows=16
+    n=10
     store = Almacen(rows,columns)
     map = store.almacen
     shelves=store.crear_pasillo()
+    for i in range(len(shelves)):
+        shelves[i]= 'P'+str(i)
+    print(shelves[6])
     hal=store.crear_estante()
-    orders()
-    individuals(shelves)
+    orders=orders()
+    individuals(shelves,n)
