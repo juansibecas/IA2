@@ -34,5 +34,5 @@ class Gen:
         while pointfin == pointinit : #para crear 2 puntos de cruce diferentes
             pointfin=random.randint(0,nind-1)
         father = random.sample(selected, 2)
-        for i in range(len(population)):
+        for i in range(len(self.population)):
             self.population[i]
