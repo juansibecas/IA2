@@ -30,11 +30,12 @@ def orders(): #Funcion para leer el archivo de ordenes y separar cada orden
 
 if __name__ == "__main__":
     max_it = 1000 
-    columns=16
+    columns=16 #con 16, 13, 3, 6 tenemos un almacen de 2x5, y cada grupo de estanterias de 5x2 = 100 estanterias
     rows=13
+    dx=3
+    dy=6
     n=10
-    warehouse = Warehouse(rows,columns)
-    map = warehouse.warehouse
+    warehouse = Warehouse(rows,columns, dx, dy)
     aisles=warehouse.create_aisles()
     shelves=warehouse.create_shelves()
     for i in range(len(shelves)): #En la estanteria le ponemos el valor como lo tenemos en ordenes

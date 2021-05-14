@@ -5,6 +5,12 @@ class Astar:
         self.start = start
         self.finish = finish
         self.warehouse = warehouse
+        
+        if self.start in self.warehouse.shelves:
+            self.start = self.warehouse.assign_aisle_to_shelf(self.start)
+            
+        if self.finish in self.warehouse.shelves:
+            self.finish = self.warehouse.assign_aisle_to_shelf(self.finish)
 
     def h_euclid(self, actual, finish, k): #función heuristica, calculamos la distancia euclidiana entre dos puntos.
         v = []  #la cambie para que sea mas general y se pueda volver a usar
