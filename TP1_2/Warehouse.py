@@ -10,7 +10,7 @@ class Warehouse:
         self.dy=dy
 
     def create_aisles(self): #Funcion para crear el pasillo el dx y dy son porque tendremos pasillo cada dx filas
-        px=0                # y cada dy columnas.
+        px=0                 #y cada dy columnas.
         py=0
         while py <self.rows:
             for j in range(self.columns):
@@ -55,3 +55,11 @@ class Warehouse:
                         neighbours.remove(neighbours[jj])
                         jj-=1
         return neighbours
+    
+    def assign_aisle_to_shelf(self, shelf): #chequea cual de los vecinos a la izquierda y a la derecha es un pasillo y lo devuelve
+        if [shelf[0], shelf[1]-1] in self.aisles: #(el horizontal es la segunda componente)
+            return [shelf[0], shelf[1]-1]
+        else:
+            return [shelf[0], shelf[1]+1]
+
+        
