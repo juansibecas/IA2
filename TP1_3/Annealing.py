@@ -59,7 +59,6 @@ class Annealing:
                 if random.uniform(0,1) < math.exp(- energy_diff/current_temp): #si es mayor pero bajo una probabilidad, lo toma
                     solution = neigh
             current_temp-=self.alph #resta a la temp una constante (funcion de varacion lineal -- puede ser exp o log tambien)
-            print(solution)
         return solution 
     
         
