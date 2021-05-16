@@ -22,8 +22,9 @@ if __name__=='__main__':
     initial_picks = []    
    
     for i in range(k):
-        initial_picks.append(creat_prod(shelves,rows,columns))
-    print(initial_picks)
+        initial_picks.append(creat_prod(shelves,rows,columns)) #no hace falta que uses el create_prod.
+                                                                #cambie el astar para que admita el caso de las estanterias tambien
+    print(initial_picks) 
     temp_ini = 100
     temp_fin = .1
     alph = 0.1

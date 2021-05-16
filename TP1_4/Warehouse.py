@@ -55,3 +55,9 @@ class Warehouse:
                         neighbours.remove(neighbours[jj])
                         jj-=1
         return neighbours
+    
+    def assign_aisle_to_shelf(self, shelf): #chequea cual de los vecinos a la izquierda y a la derecha es un pasillo y lo devuelve
+        if [shelf[0], shelf[1]-1] in self.aisles: #(el horizontal es la segunda componente)
+            return [shelf[0], shelf[1]-1]
+        else:
+            return [shelf[0], shelf[1]+1]
