@@ -35,7 +35,7 @@ if __name__ == "__main__":
     dx=3
     dy=6
     n=10
-    warehouse = Warehouse(rows,columns,3,6)
+    warehouse = Warehouse(rows,columns,dx,dy)
     map = warehouse.warehouse
     aisles=warehouse.create_aisles()
     shelves=warehouse.create_shelves()
@@ -45,4 +45,5 @@ if __name__ == "__main__":
     print(map)
     orders=orders()
     gen=Gen(shelves,n)
-    gen.sel_and_rep()
+    best=gen.sel_and_rep() #El mejor recorrido posible
+    print(best)

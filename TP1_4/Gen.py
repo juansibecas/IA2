@@ -23,11 +23,21 @@ class Gen:
 
     def sel_and_rep(self):
         self.set_pop()
-        #self.fitness=[(self.set_fitness(i), i) for i in self.population]
-        selected=self.population
+        flag=0
+        it=0
+        while flag==0: #con esto hacemos los metodos de detencion por cantidad de iteraciones o convergencia.
 
-    def order_crossover(self, parent1, parent2): #aca hay que ver despues como hacemos, si mandamos los padres como parametros, si los elegimos afuera o adentro, etc
+            #self.fitness=[(self.set_fitness(i), i) for i in self.population] #calculamosel fitnes de cada individuo y ordenamos para luego seleccionarlos
         
+            #self.order_crossover()          #ahora hacemos los cruces entre los 
+            #self.partially_mapped_crossover()
+            #self.cycle_crossover()
+            it+=1
+            if it==100:
+                flag=1
+        return population #aca tenemos que retornar el de menor fitnes
+    def order_crossover(self, parent1, parent2): #aca hay que ver despues como hacemos, si mandamos los padres como parametros, si los elegimos afuera o adentro, etc
+                                                #Facu:creo q es mejor pasar la población como parametro y retornar otra población
         n_genes, child1, child2, pointinit, pointfin = two_point_crossover_init(parent1, parent2)
         counter1= 0
         counter2= 0
