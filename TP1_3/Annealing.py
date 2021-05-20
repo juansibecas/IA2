@@ -6,12 +6,13 @@ from copy import copy
 import matplotlib.pyplot as plt
 
 class Annealing:
-    def __init__(self, tempini, tempfin, alph, neighbours, warehouse): 
+    def __init__(self, tempini, tempfin, alph, warehouse): 
         self.tempini = tempini 
         self.tempfin = tempfin
         self.alph = alph
-        self.neighbours = neighbours
         self.warehouse = warehouse
+        self.temperatures = []
+        self.costs = []
     
     def astar_path(self, pick_in, pick_fin):
         astar = Astar(pick_in, pick_fin, self.warehouse)
@@ -33,6 +34,9 @@ class Annealing:
         idx1 = random.randint(0, len(rand_neighbours)-1)
         idx2 = random.randint(0, len(rand_neighbours)-1)
         
+        while idx1 == idx2:
+            idx2 = random.randint(0, len(rand_neighbours)-1)
+        
         rand_neighbours[idx1], rand_neighbours[idx2] = rand_neighbours[idx2], rand_neighbours[idx1]
         
         """DEPRECATED
@@ -52,25 +56,18 @@ class Annealing:
     def simulated_annealing(self, init_state):
         current_temp = self.tempini              #temperatura inicial (alta)
         solution = init_state              #estado actaul: arreglo inicial de picking (producto 1, producto 2,....)
-        plot_x = []
-        plot_y = []
 
         while current_temp > self.tempfin:
-            plot_x.append(current_temp)
-            plot_y.append(self.get_energy(solution))
+            self.temperatures.append(current_temp)
+            self.costs.append(self.get_energy(solution))
             neigh = self.get_neighbour(solution) #generacion de estado vecino 
             energy_diff = self.get_energy(solution) - self.get_energy(neigh) #diferencia de energia entre estados
             if energy_diff > 0: #puede o no cambiar el estado actual (estocasticidad)
                 solution = neigh #si es menor lo toma
-            if random.uniform(0,1) < math.exp(energy_diff/current_temp): #si es mayor pero bajo una probabilidad, lo toma (va energy_diff sin signo, el negativo ya lo trae)
+            elif random.uniform(0,1) < math.exp(energy_diff/current_temp): #si es mayor pero bajo una probabilidad, lo toma (va energy_diff sin signo, el negativo ya lo trae)
                 solution = neigh
-            current_temp *= self.alph #resta a la temp una constante (funcion de varacion lineal -- puede ser exp o log tambien)
-        print("la solucion es:", solution)
+            current_temp *= self.alph #resta a la temp una constante (funcion de varacion lineal -- puede ser exp o log tambien))
         total_path_length = self.get_energy(solution)
-        
-
-        plt.plot(plot_x, plot_y)
-        plt.xlim(self.tempini, self.tempfin)
         
         return solution, total_path_length
     
