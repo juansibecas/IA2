@@ -40,7 +40,6 @@ if __name__ == "__main__":
     shelves=warehouse.create_shelves()
     for i in range(len(shelves)): #En la estanteria le ponemos el valor como lo tenemos en ordenes
         shelves[i]= 'P'+str(i)
-    print(len(shelves))
     orders=orders()
-    gen=Gen(shelves,n)
-    gen.sel_and_rep()
+
+    

@@ -1,31 +1,70 @@
+from Annealing import Annealing
 import random
 
 class Gen:
-    def __init__(self,shelves,n):
+    def __init__(self, population_length, n, warehouse):
         self.fitness=[]
         self.population=[]
-        self.shelves=shelves
         self.n=n
-    
-    def individuals(self): #creamos los individuos inicial con una lista random sample
-        i=len(self.shelves)
-        return (random.sample(range(0,i),i))
+        tempini = 50
+        tempfin = 0.1
+        alpha = 0.99
+        self.annealing = Annealing(tempini, tempfin, alpha, warehouse)
+        
+    def GA(self, it, time, tolerance):
+        
+        for i in range(it): #por ahora puse este limite solamente, una vez vayamos entendiendo mejor podemos agregar un limite de tiempo o de tolerancia
+            
+            self.calculate_fitness()
+            
+            self.population.sort(key=sort_by_f)
+            
+            #self.calculate_pick_probability() no hace falta porque random.choices en pick_fittest lo hace solo
+            
+            fittest = self.pick_fittest_individuals()
+            
+            self.population = self.crossover_and_mutation(fittest)
+            
+            
 
-    def set_pop(self): #creamos una nueva pobacion de individuos
-        for j in range(self.n):
-            self.population.append(self.individuals())
-
-    def get_pop(self):
-        print(self.population)
-
-    def set_fitness(self,individual):
-        fit=0
-
-    def sel_and_rep(self):
-        self.set_pop()
-        print(self.population[9][98])
-        #self.fitness=[(self.set_fitness(i), i) for i in self.population]
-        selected=self.population
+    def calculate_fitness(self):  #van a tener que estar normalizados y ordenados al reves (el de recorrido mas chico = 1, el de recorrido mas grande=0)
+        for individual in self.population:
+            if individual.fitness == -1: #valor de inicializacion, para no volver a calcular las f de los individuos que ya tienen
+                _, total_path_length = self.annealing.simulated_annealing(individual)
+                individual.set_f(total_path_length)
+                
+    def calculate_pick_probability(self):
+        f_sum = 0
+        for individual in self.population:
+            f_sum += individual.f
+        for individual in self.population:
+            p = individual.f / f_sum
+            individual.set_p(p)
+            
+    def pick_fittest_individuals(self):
+        n = 2                                   #fraccion 1/n de la poblacion se va a tener en cuenta
+        k = len(self.population)/n
+        fitnesses = []
+        for individual in self.population:
+            fitnesses.append(individual.f)
+        random.choices(self.population, weights = fitnesses, k=k) #weights aporta la probabilidad de elegir a cada individuo p[i]=f[i]/sum(f)
+        
+    def crossover_and_mutation(self, fittest_selection):
+        k = 2                                           #k= 1 con pmx, k=2 con crossover de ciclos u orden (cantidad de hijos que devuelve)
+        ammount_of_crossovers = len(self.population)/k
+        new_population = []
+        
+        for n in range(ammount_of_crossovers): #crossover
+            parent1 = random.choice(fittest_selection)
+            parent2 = random.choice(fittest_selection)
+            child1, child2 = self.order_crossover(parent1, parent2) #aca se puede variar el metodo de crossover, tambien hay que cambiar el k
+            new_population.append(child1)
+            new_population.append(child2)
+        
+        for individual in new_population: #mutacion
+            individual = self.insertion_mutation(individual) #aca se puede variar el metodo de mutacion
+            
+        return new_population
 
     def order_crossover(self, parent1, parent2): #aca hay que ver despues como hacemos, si mandamos los padres como parametros, si los elegimos afuera o adentro, etc
         
@@ -156,9 +195,13 @@ class Gen:
             individual[i] = genes[j]                    #se colocan los genes mezclados
         
         return individual
-            
+
+def normalize(value, xi, xf):
+    return (value - xi)/(xf - xi)
         
-        
+def sort_by_f(individual):
+    return individual.fitness
+
 def two_point_crossover_init(parent1, parent2):
     n_genes= len(parent1)
     child1 = [-1]*n_genes #los inicializo con -1 porque el 0 es un gen valido y puede complicar algunos crossovers y/o mutaciones
@@ -176,7 +219,18 @@ def two_point_crossover_init(parent1, parent2):
     return n_genes, child1, child2, pointinit, pointfin
         
         
+class Individual:
+    
+    def __init__(self, genes):
+        self.genes = genes
+        self.f = -1
+        self.p = -1
         
+    def set_f(self, f):
+        self.f = f
+        
+    def set_p(self, p):
+        self.p = p
         
         
         

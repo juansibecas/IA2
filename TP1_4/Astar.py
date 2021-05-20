@@ -1,5 +1,6 @@
 import math
 from copy import copy
+
 class Astar:
     def __init__(self, start, finish, warehouse):
         self.start = start
@@ -11,7 +12,7 @@ class Astar:
             
         if self.finish in self.warehouse.shelves:
             self.finish = self.warehouse.assign_aisle_to_shelf(self.finish)
-
+            
     def h_euclid(self, actual, finish, k): #función heuristica, calculamos la distancia euclidiana entre dos puntos.
         v = []  #la cambie para que sea mas general y se pueda volver a usar
         for i in range(len(actual)):
@@ -24,7 +25,7 @@ class Astar:
             v.append(abs(actual[i] - finish[i]))
         return sum(v)
       
-    def path(self, column, row): #Funcion para encontrar el menor camino.
+    def path(self): #Funcion para encontrar el menor camino.
         neighbours=[]  #guardaremos todos los vecinos de la posicion actual
         nodes=[]    #guardaremos todos los nodos - ver class Nodo
         flag=1

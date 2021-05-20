@@ -2,37 +2,44 @@ import random
 import math
 from Astar import Astar
 from Warehouse import Warehouse
+from copy import copy
+import matplotlib.pyplot as plt
 
 class Annealing:
-    def __init__(self, tempini, tempfin, alph, neighbours, rows, columns, dx, dy): 
+    def __init__(self, tempini, tempfin, alph, warehouse): 
         self.tempini = tempini 
         self.tempfin = tempfin
         self.alph = alph
-        self.neighbours = neighbours
-        self.rows = rows
-        self.columns = columns
-        self.wh_dx = dx
-        self.wh_dy = dy
+        self.warehouse = warehouse
+        self.temperatures = []
+        self.costs = []
     
-    def astar_path(self, pick_in, pick_fin):              #decidi crear un almacen en cada intervalo de 
-        warehouse = Warehouse(self.rows, self.columns, self.wh_dx, self.wh_dy)    #picking porque las restricciones de vecinos podian 
-                                                          #mamar la busqueda siguiente
-        warehouse.create_aisles()
-        warehouse.create_shelves()
-        astar = Astar(pick_in, pick_fin, warehouse)
-
+    def astar_path(self, pick_in, pick_fin):
+        astar = Astar(pick_in, pick_fin, self.warehouse)
+        self.warehouse.clear_map() #el problema estaba en como chequea los lugares que ya visito, agregue esta func para limpiar el mapa despues de cada a*
         return astar.path()     #devuelve el camino de la busqueda entre dos productos
 
-    def get_energy(self,state):            #funcion para conseguir la energia del estado, es decir, la cantidad de nodos 
+    def get_energy(self, state):            #funcion para conseguir la energia del estado, es decir, la cantidad de nodos 
         path=[]                            #que visito en total al hacer la busqueda anidada de pj. 5 productos
+        
         for i in range (len(state)-1):
             pick1=state[i]
             pick2=state[i+1]
             path.extend(self.astar_path(pick1,pick2))  #se van agregando los caminos entre cada pick
         return len(path)
     
-    def get_neighbour(self):            #toma los puntos de picking generados aleatoriamente y crea un vecino con una permutacion
-        rand_neighbours = self.neighbours         #cada vecino es un arreglo de puntos en el almacen, pj 5 productos 
+    def get_neighbour(self, solution):            #toma los puntos de picking generados aleatoriamente y crea un vecino con una permutacion
+        rand_neighbours = copy(solution)         #cada vecino es un arreglo de puntos en el almacen, pj 5 productos 
+        
+        idx1 = random.randint(0, len(rand_neighbours)-1)
+        idx2 = random.randint(0, len(rand_neighbours)-1)
+        
+        while idx1 == idx2:
+            idx2 = random.randint(0, len(rand_neighbours)-1)
+        
+        rand_neighbours[idx1], rand_neighbours[idx2] = rand_neighbours[idx2], rand_neighbours[idx1]
+        
+        """DEPRECATED
         val1= random.choice(rand_neighbours) 
         val2=random.choice(rand_neighbours)
         while val2 == val1:
@@ -42,24 +49,27 @@ class Annealing:
         rand_neighbours.remove(val1)
         rand_neighbours.insert(ind1, val2)
         rand_neighbours.remove(val2)
-        rand_neighbours.insert(ind2, val1)
+        rand_neighbours.insert(ind2, val1)"""
+        
         return rand_neighbours           #retorna un arreglo similar al inicial pero con una permutacion en el orden de pick
 
     def simulated_annealing(self, init_state):
-        current_temp= self.tempini              #temperatura inicial (alta)
-        current_state = init_state              #estado actaul: arreglo inicial de picking (producto 1, producto 2,....)
-        solution = current_state
+        current_temp = self.tempini              #temperatura inicial (alta)
+        solution = init_state              #estado actaul: arreglo inicial de picking (producto 1, producto 2,....)
 
-        while current_temp > self.tempfin:      
-            neigh = self.get_neighbour() #generacion de estado vecino 
-            energy_diff = self.get_energy(current_state) - self.get_energy(neigh) #diferencia de energia entre estados
+        while current_temp > self.tempfin:
+            self.temperatures.append(current_temp)
+            self.costs.append(self.get_energy(solution))
+            neigh = self.get_neighbour(solution) #generacion de estado vecino 
+            energy_diff = self.get_energy(solution) - self.get_energy(neigh) #diferencia de energia entre estados
             if energy_diff > 0: #puede o no cambiar el estado actual (estocasticidad)
                 solution = neigh #si es menor lo toma
-            else:
-                if random.uniform(0,1) < math.exp(- energy_diff/current_temp): #si es mayor pero bajo una probabilidad, lo toma
-                    solution = neigh
-            current_temp-=self.alph #resta a la temp una constante (funcion de varacion lineal -- puede ser exp o log tambien)
-        return solution 
+            elif random.uniform(0,1) < math.exp(energy_diff/current_temp): #si es mayor pero bajo una probabilidad, lo toma (va energy_diff sin signo, el negativo ya lo trae)
+                solution = neigh
+            current_temp *= self.alph #resta a la temp una constante (funcion de varacion lineal -- puede ser exp o log tambien))
+        total_path_length = self.get_energy(solution)
+        
+        return solution, total_path_length
     
         
     
