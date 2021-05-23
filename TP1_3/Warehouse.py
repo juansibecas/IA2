@@ -61,3 +61,6 @@ class Warehouse:
             return [shelf[0], shelf[1]-1]
         else:
             return [shelf[0], shelf[1]+1]
+        
+    def clear_map(self):
+        self.map = np.zeros((self.rows, self.columns))

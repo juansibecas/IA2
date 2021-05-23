@@ -1,25 +1,31 @@
+from Annealing import Annealing
 import random
 
 class Gen:
-    def __init__(self,shelves,n):
+    def __init__(self, population_length, n, warehouse):
         self.fitness=[]
         self.population=[]
-        self.shelves=shelves
         self.n=n
-    
-    def individuals(self): #creamos los individuos inicial con una lista random sample
-        i=len(self.shelves)
-        return (random.sample(range(0,i),i))
-
-    def set_pop(self): #creamos una nueva pobacion de individuos
-        for j in range(self.n):
-            self.population.append(self.individuals())
-
-    def get_pop(self):
-        print(self.population)
-
-    def set_fitness(self,individual):
-        fit=0
+        tempini = 50
+        tempfin = 0.1
+        alpha = 0.99
+        self.annealing = Annealing(tempini, tempfin, alpha, warehouse)
+        
+    def GA(self, it, time, tolerance):
+        
+        for i in range(it): #por ahora puse este limite solamente, una vez vayamos entendiendo mejor podemos agregar un limite de tiempo o de tolerancia
+            
+            self.calculate_fitness()
+            
+            self.population.sort(key=sort_by_f)
+            
+            #self.calculate_pick_probability() no hace falta porque random.choices en pick_fittest lo hace solo
+            
+            fittest = self.pick_fittest_individuals()
+            
+            self.population = self.crossover_and_mutation(fittest)
+            
+            
 
     def sel_and_rep(self):
         self.set_pop()
@@ -165,9 +171,13 @@ class Gen:
             individual[i] = genes[j]                    #se colocan los genes mezclados
         
         return individual
-            
+
+def normalize(value, xi, xf):
+    return (value - xi)/(xf - xi)
         
-        
+def sort_by_f(individual):
+    return individual.fitness
+
 def two_point_crossover_init(parent1, parent2):
     n_genes= len(parent1)
     child1 = [-1]*n_genes #los inicializo con -1 porque el 0 es un gen valido y puede complicar algunos crossovers y/o mutaciones
@@ -185,7 +195,18 @@ def two_point_crossover_init(parent1, parent2):
     return n_genes, child1, child2, pointinit, pointfin
         
         
+class Individual:
+    
+    def __init__(self, genes):
+        self.genes = genes
+        self.f = -1
+        self.p = -1
         
+    def set_f(self, f):
+        self.f = f
+        
+    def set_p(self, p):
+        self.p = p
         
         
         
