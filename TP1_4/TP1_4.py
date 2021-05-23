@@ -24,6 +24,7 @@ def orders(): #Funcion para leer el archivo de ordenes y separar cada orden
             if line != '\n':
                 line=line.rstrip('\n')
                 lines.append(line)
+    return orders
     #for j in range(i):
         #orders[j].getorder()
 
@@ -41,5 +42,6 @@ if __name__ == "__main__":
     for i in range(len(shelves)): #En la estanteria le ponemos el valor como lo tenemos en ordenes
         shelves[i]= 'P'+str(i)
     orders=orders()
+    
 
     
