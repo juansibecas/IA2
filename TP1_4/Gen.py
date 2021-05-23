@@ -28,11 +28,17 @@ class Gen:
             
 
     def calculate_fitness(self):  #van a tener que estar normalizados y ordenados al reves (el de recorrido mas chico = 1, el de recorrido mas grande=0)
+        fsn=[] #fitnes sin normalizar
         for individual in self.population:
             if individual.fitness == -1: #valor de inicializacion, para no volver a calcular las f de los individuos que ya tienen
                 _, total_path_length = self.annealing.simulated_annealing(individual)
+                fsn.append(total_path_length)
                 individual.set_f(total_path_length)
-                
+        max_path_length=max(fsn)
+        min_path_length=min(fsn)
+        for i in fsn:
+            individual.set_fn(normalize(i,min_path_length,max_path_length))
+
     def calculate_pick_probability(self):
         f_sum = 0
         for individual in self.population:
@@ -225,10 +231,14 @@ class Individual:
         self.genes = genes
         self.f = -1
         self.p = -1
+        self.fn = -1
         
     def set_f(self, f):
         self.f = f
-        
+    
+    def set_fn(self, fn):
+        self.fn = fn
+
     def set_p(self, p):
         self.p = p
         
