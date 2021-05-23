@@ -35,15 +35,11 @@ if __name__ == "__main__":
     dx=3
     dy=6
     n=10
-    warehouse = Warehouse(rows,columns,dx,dy)
-    map = warehouse.warehouse
+    warehouse = Warehouse(rows,columns, dx, dy)
     aisles=warehouse.create_aisles()
     shelves=warehouse.create_shelves()
     for i in range(len(shelves)): #En la estanteria le ponemos el valor como lo tenemos en ordenes
         shelves[i]= 'P'+str(i)
-    map = warehouse.map
-    print(map)
     orders=orders()
-    gen=Gen(shelves,n)
-    best=gen.sel_and_rep() #El mejor recorrido posible
-    print(best)
+
+    
