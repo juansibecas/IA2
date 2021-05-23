@@ -46,11 +46,13 @@ class Annealing:
         return rand_neighbours           #retorna un arreglo similar al inicial pero con una permutacion en el orden de pick
 
     def simulated_annealing(self, init_state):
+
         current_temp= self.tempini              #temperatura inicial (alta)
         current_state = init_state              #estado actaul: arreglo inicial de picking (producto 1, producto 2,....)
         solution = current_state
 
-        while current_temp > self.tempfin:      
+        while current_temp > self.tempfin:
+                 
             neigh = self.get_neighbour() #generacion de estado vecino 
             energy_diff = self.get_energy(current_state) - self.get_energy(neigh) #diferencia de energia entre estados
             if energy_diff > 0: #puede o no cambiar el estado actual (estocasticidad)
@@ -59,6 +61,7 @@ class Annealing:
                 if random.uniform(0,1) < math.exp(- energy_diff/current_temp): #si es mayor pero bajo una probabilidad, lo toma
                     solution = neigh
             current_temp-=self.alph #resta a la temp una constante (funcion de varacion lineal -- puede ser exp o log tambien)
+            print(solution)
         return solution 
     
         
