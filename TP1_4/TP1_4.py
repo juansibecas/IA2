@@ -8,24 +8,25 @@ import random
 def orders(): #Funcion para leer el archivo de ordenes y separar cada orden
     orders=[]
     lines=[]
-    f=open("orders.txt")
-    line=(f.readline())
-    orders.append(Order(line))
-    i=0
-    while line != '': #Para indicar que estamos en el fin de la lista
-        if line == '\n': #Si solo tenemos \n pasamos a la siguiente orden
-            orders[i].setorder(lines) #guardamos en la orden las lineas que teniamos anteriormente y luego las limpiamos
-            i+=1
-            line=(f.readline())
-            orders.append(Order(line))#El primer elemento del archivo es el orden del pedido. lo guardamos aparte
-            lines=[]
-        else:
-            line=f.readline()
-            if line != '\n':
-                line=line.rstrip('\n')
-                lines.append(line)
-    #for j in range(i):
-        #orders[j].getorder()
+    with open('orders.txt', 'r') as f:
+        line=(f.readline())
+        orders.append(Order(line))
+        i=0
+        while line != '': #Para indicar que estamos en el fin de la lista   
+            if line == '\n': #Si solo tenemos \n pasamos a la siguiente orden
+                orders[i].setorder(lines) #guardamos en la orden las lineas que teniamos anteriormente y luego las limpiamos
+                i+=1
+                line=(f.readline())
+                orders.append(Order(line))#El primer elemento del archivo es el orden del pedido. lo guardamos aparte
+                lines=[]
+            else:
+                line=f.readline()
+                if line != '\n':
+                    line=line.rstrip('\n')
+                    lines.append(line)
+        #for j in range(i):
+            #orders[j].getorder()
+    return orders
 
 
 if __name__ == "__main__":
@@ -38,8 +39,8 @@ if __name__ == "__main__":
     warehouse = Warehouse(rows,columns, dx, dy)
     aisles=warehouse.create_aisles()
     shelves=warehouse.create_shelves()
-    for i in range(len(shelves)): #En la estanteria le ponemos el valor como lo tenemos en ordenes
-        shelves[i]= 'P'+str(i)
+    #for i in range(len(shelves)): #En la estanteria le ponemos el valor como lo tenemos en ordenes
+    #    shelves[i]= 'P'+str(i)
     orders=orders()
 
     
