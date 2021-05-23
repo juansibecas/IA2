@@ -31,13 +31,17 @@ class Gen:
         fsn=[] #fitnes sin normalizar
         for individual in self.population:
             if individual.fitness == -1: #valor de inicializacion, para no volver a calcular las f de los individuos que ya tienen
-                _, total_path_length = self.annealing.simulated_annealing(individual)
-                fsn.append(total_path_length)
-                individual.set_f(total_path_length)
-        max_path_length=max(fsn)
-        min_path_length=min(fsn)
-        for i in fsn:
-            individual.set_fn(normalize(i,min_path_length,max_path_length))
+                f_orders=[]
+                for order in orders: 
+                    _, total_path_length = self.annealing.simulated_annealing(order)
+                    f_order.append(total_path_length)
+                prom_path=sum(f_order)/len(f_order)
+                fsn.append(prom_path)
+                individual.set_f(prom_path)
+            max_path=max(fsn)
+            min_path=min(fsn)
+            for i in fsn:
+                individual.set_fn(normalize(i,min_path,max_path))
 
     def calculate_pick_probability(self):
         f_sum = 0
