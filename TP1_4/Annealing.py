@@ -30,12 +30,12 @@ class Annealing:
     
     def get_neighbour(self, solution):            #toma los puntos de picking generados aleatoriamente y crea un vecino con una permutacion
         rand_neighbours = copy(solution)         #cada vecino es un arreglo de puntos en el almacen, pj 5 productos 
-        
-        idx1 = random.randint(0, len(rand_neighbours)-1)
-        idx2 = random.randint(0, len(rand_neighbours)-1)
+
+        idx1 = random.randint(1, len(rand_neighbours)-2) #ahora es con 1 y -2 para no cambiar el punto inicial y el final
+        idx2 = random.randint(1, len(rand_neighbours)-2)
         
         while idx1 == idx2:
-            idx2 = random.randint(0, len(rand_neighbours)-1)
+            idx2 = random.randint(1, len(rand_neighbours)-2)
         
         rand_neighbours[idx1], rand_neighbours[idx2] = rand_neighbours[idx2], rand_neighbours[idx1]
         
@@ -56,7 +56,6 @@ class Annealing:
     def simulated_annealing(self, init_state):
         current_temp = self.tempini              #temperatura inicial (alta)
         solution = init_state              #estado actaul: arreglo inicial de picking (producto 1, producto 2,....)
-
         while current_temp > self.tempfin:
             self.temperatures.append(current_temp)
             self.costs.append(self.get_energy(solution))

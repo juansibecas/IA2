@@ -15,11 +15,11 @@ if __name__=='__main__':
     rows = 13
     dx = 3
     dy = 6
-    temp_ini = 100
+    temp_ini = 20
     temp_fin = 0.1
-    alph = 0.98
+    alph = 0.5
     k = 20 #cantidad de productos en la lista de pick
-    m=20 #cantidad de ordenes
+    m=100 #cantidad de ordenes
     plt.xlim(0, 1)
     t1 = time.time()
         
@@ -31,8 +31,7 @@ if __name__=='__main__':
     temperature=[]
     energy=[]
     for i in range (m):
-
-        print(i)        
+       
         initial_picks = []    
     
         for i in range(k):
