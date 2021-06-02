@@ -15,11 +15,11 @@ if __name__=='__main__':
     rows = 13
     dx = 3
     dy = 6
-    temp_ini = 20
+    temp_ini = 50
     temp_fin = 0.1
-    alph = 0.5
+    alph = 0.9
     k = 20 #cantidad de productos en la lista de pick
-    m=100 #cantidad de ordenes
+    m = 100 #cantidad de ordenes
     plt.xlim(0, 1)
     t1 = time.time()
         
@@ -41,7 +41,7 @@ if __name__=='__main__':
         #print("lugares a visitar:", initial_picks) 
         
         annealing = Annealing(temp_ini, temp_fin, alph, initial_picks, warehouse)
-
+        
         order_temp, total_path_length = annealing.simulated_annealing(initial_picks)
         
         temperature.append(annealing.temperature)
@@ -54,7 +54,8 @@ if __name__=='__main__':
         print("longitud total a recorrer:", total_path_length)
         print("El orden adecuado de pick es: ")
         print(result)
-        """ 
+        """
+    warehouse.write_db_to_file()
     t2 = time.time()
     print("tiempo de ejecucion:", t2-t1)   
            
