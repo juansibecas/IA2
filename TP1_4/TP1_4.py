@@ -24,15 +24,13 @@ def orders(init_pos): #Funcion para leer el archivo de ordenes y separar cada or
                 if line != '\n':
                     line=line.rstrip('\n')
                     lines.append(line)
-        #for j in range(i):
-            #orders[j].getorder()
+
         orders_length = len(orders)
         orders.remove(orders[orders_length-1]) #al final se agregaba una orden sin nada, en vez de arreglarlo la quito asi y a la mierda
     return orders
 
 
 if __name__ == "__main__":
-    max_it = 1000 
     columns=16 #con 16, 13, 3, 6 tenemos un almacen de 2x5, y cada grupo de estanterias de 5x2 = 100 estanterias
     rows=13
     dx=3
@@ -40,19 +38,22 @@ if __name__ == "__main__":
     warehouse = Warehouse(rows,columns, dx, dy)
     aisles=warehouse.create_aisles()
     shelves=warehouse.create_shelves()
-    init_pos = [0,0]
+    init_pos = [0,0] #deposito donde empiezan y terminan las ordenes
     orders=orders(init_pos)
     
-    temp_ini_annealing = 20
+    temp_ini_annealing = 50
     temp_fin_annealing = 0.1
-    alpha_annealing = 0.5
+    alpha_annealing = 0.8
     
-    population_length = 10
-    it = 5
-    max_time_in_hours = 5
-    tolerance = 1
+    population_length = 20
+    max_it = 500
+    max_time_in_hours = 0.3
+    tolerance = 1   #porcentual
+    
     genetic_algorithm = Gen(population_length, warehouse, orders, temp_ini_annealing, temp_fin_annealing, alpha_annealing)
     genetic_algorithm.population_init()
-    genetic_algorithm.GA(it, max_time_in_hours/3600, tolerance)
+    genetic_algorithm.GA(max_it, max_time_in_hours*3600, tolerance)
+    print('product placement order:', genetic_algorithm.population[0].genes)
+    print('avg length: ', genetic_algorithm.population[0].f)
 
     
