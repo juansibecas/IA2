@@ -27,7 +27,7 @@ def csp(index,graph,total_time,domain,neighbors,time_task,assignment,list_not_us
     graph.append(Graph(total_time,copy.deepcopy(domain),copy.deepcopy(neighbors),time_task,copy.deepcopy(assignment))) #Creamos grafos de reestriciones en cada iteracion por si queremos hacer backtracking         
     index=index+1
     variable,flag_allerror=graph[index].heuristic_MRV(list_not_use[index-1]) #Elegimos la variable con menor dominios para elegir (heuristica)
-    if flag_allerror==1:    #Si todas las variables de ese arbol no llegan a ningun resultado tenemos que volver al nodo anterior
+    if flag_allerror==1:    #Backtracking: Si todas las variables de ese arbol no llegan a ningun resultado tenemos que volver al nodo anterior
         list_not_use[index].append(graph[index].assignment[index]) #agregamos la asignacion usada que no llevaba a ninguna solucion para no usarla
         graph[index].pop()      #borramos el ultimo grafo
         index=index-1 
@@ -37,7 +37,7 @@ def csp(index,graph,total_time,domain,neighbors,time_task,assignment,list_not_us
         assignment=graph[index].assignment
     else:    
         domain,neighbors,assignment,flag_error=graph[index].inference(variable) #Borramos la variable eleiga y sus reestriciones con las demas y podamos el arbol
-        if flag_error==1:      #Si esa variable variable da a una solucion no valida hacemos backtracking
+        if flag_error==1:      #Backtracking: Si esa variable variable da a una solucion no valida hacemos backtracking
             graph[index].pop()  #borramos el grafo ultimo
             index=index-1
             domain=graph[index].domain

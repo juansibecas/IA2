@@ -6,9 +6,7 @@ class Graph:
     _task: Diccionario con las tareas(variables) como Keys y su valor son la duracion de la tarea.
     _ domain: Diccionario con las tareas(variables) como Keys y su valor son los valores q puede tomar.
     _ neighbors: Diccionario con las tareas(variables) como Keys y su valor son las variables que tiene restriones.
-    _ constraint: funcion que recibe dos variables y retorna True/False si se cumple la reestriccion o no.
     _ assignment: Lista con la Tarea su maquina y hora de inicio
-    _ csp_act: Copiamos el grafo de restricciones actual para luego hacer el backtracking en caso de ser necesario
     """
     def __init__(self,total_time,domain,neighbors,time_task,assignment):
         self.time_task=time_task
