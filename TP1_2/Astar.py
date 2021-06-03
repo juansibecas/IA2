@@ -28,19 +28,28 @@ class Astar:
         return sum(v)
       
     def path(self, column, row): #Funcion para encontrar el menor camino.
+        
+        if self.start == self.finish: #termina de una si empieza en el destino
+            return [[self.start]], 0
+        
+        db_check = int(self.warehouse.check_db(self.start, self.finish)) #devuelve -1 si no se calculo todavia
+        
+        if db_check > 0: #chequea si ese caso ya esta calculado (cuando no esta calculado, devuelve -1)
+            return 0, db_check
+        
         neighbours=[]  #guardaremos todos los vecinos de la posicion actual
         nodes=[]    #guardaremos todos los nodos - ver class Nodo
-        flag=1
         f=0
         prev = Node(self.start, 0, 0, 0)
         g=0
-        
-        if self.start == self.finish: #termina de una si empieza en el destino
-            return [[self.start]]
 
-        while flag:
+        while True:
             g+=1
             neighbours=self.warehouse.find_neighbours(prev.pos, self.finish)
+            
+            if self.finish in neighbours:       #si el final esta dentro de los vecinos, se mueve a el y termina el programa. Llegamos  
+                prev = Node(self.finish, 0, 100, prev) #le pongo cualquier cosa que no sea 0 al nivel
+                break
             
             for j in range(len(neighbours)):
                 f=g+self.h_manhattan(neighbours[j], self.finish)      #calculamos la funcion f para cada vecino, g vale una unidad por cada movimiento
@@ -55,18 +64,19 @@ class Astar:
             prev = copy(nodes[0])
             nodes.pop(0)                    #eliminamos el valor actual de los nodos para que no se pueda volver a el   
             
-            if self.finish in neighbours:       #si el final esta dentro de los vecinos, se mueve a el y termina el programa. Llegamos  
-                flag=0
                 
         path = []
         path = prev.connect_path(path) 
         path.reverse()
+        path_len = len(path)-1 #-1 porque en path se incluye la posicion inicial
         
         for i in path:
             self.warehouse.map[i[0], i[1]] = 1 #1 es por donde pasa
-        print(self.warehouse.map)
+        #print(self.warehouse.map)
         
-        return path
+        self.warehouse.write_to_db(self.start, self.finish, path_len)  #escribe lo calculado
+        
+        return path, path_len
 
 def delete_duplicates(lst):
     return list(set(lst))

@@ -20,22 +20,23 @@ class Annealing:
         return astar.path()     #devuelve el camino de la busqueda entre dos productos
 
     def get_energy(self, state):            #funcion para conseguir la energia del estado, es decir, la cantidad de nodos 
-        path=[]                            #que visito en total al hacer la busqueda anidada de pj. 5 productos
+        energy = 0                           #que visito en total al hacer la busqueda anidada de pj. 5 productos
         
         for i in range (len(state)-1):
             pick1=state[i]
             pick2=state[i+1]
-            path.extend(self.astar_path(pick1,pick2))  #se van agregando los caminos entre cada pick
-        return len(path)
+            _, path_len = self.astar_path(pick1,pick2)
+            energy += path_len  #se van agregando los caminos entre cada pick
+        return energy
     
     def get_neighbour(self, solution):            #toma los puntos de picking generados aleatoriamente y crea un vecino con una permutacion
         rand_neighbours = copy(solution)         #cada vecino es un arreglo de puntos en el almacen, pj 5 productos 
-        
-        idx1 = random.randint(0, len(rand_neighbours)-1)
-        idx2 = random.randint(0, len(rand_neighbours)-1)
+
+        idx1 = random.randint(1, len(rand_neighbours)-2) #ahora es con 1 y -2 para no cambiar el punto inicial y el final
+        idx2 = random.randint(1, len(rand_neighbours)-2)
         
         while idx1 == idx2:
-            idx2 = random.randint(0, len(rand_neighbours)-1)
+            idx2 = random.randint(1, len(rand_neighbours)-2)
         
         rand_neighbours[idx1], rand_neighbours[idx2] = rand_neighbours[idx2], rand_neighbours[idx1]
         
@@ -56,7 +57,6 @@ class Annealing:
     def simulated_annealing(self, init_state):
         current_temp = self.tempini              #temperatura inicial (alta)
         solution = init_state              #estado actaul: arreglo inicial de picking (producto 1, producto 2,....)
-
         while current_temp > self.tempfin:
             self.temperatures.append(current_temp)
             self.costs.append(self.get_energy(solution))

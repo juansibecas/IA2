@@ -1,49 +1,96 @@
 from Annealing import Annealing
 import random
+import time
+from copy import copy
 
 class Gen:
-    def __init__(self, population_length, n, warehouse):
-        self.fitness=[]
-        self.population=[]
-        self.n=n
-        tempini = 50
-        tempfin = 0.1
-        alpha = 0.99
-        self.annealing = Annealing(tempini, tempfin, alpha, warehouse)
+    def __init__(self, population_length, warehouse, orders, temp_ini, temp_fin, alpha):
+        self.population_length = population_length
+        self.shelves = warehouse.shelves       
+        self.orders = orders
+        self.population = []
+        self.warehouse = warehouse
+        self.annealing = Annealing(temp_ini, temp_fin, alpha, warehouse)
+        self.t0 = time.time()
+        self.generation = -1
+    
+    def __str__(self):
+        t1 = time.time()
+        self.generation += 1
+        return f'generation {self.generation} complete, time elapsed: {t1-self.t0}\n lowest avg length: {self.population[0].f}'
+    
+    def population_init(self):
+        for individual_idx in range(self.population_length):
+            genes_numbers_only = random.sample(range(len(self.shelves)), len(self.shelves))
+            genes_with_a_P = []
+            for i in genes_numbers_only:
+                genes_with_a_P.append('P' + str(i))
+            self.population.append(Individual(genes_with_a_P))
+            
+        self.calculate_fitness()
         
-    def GA(self, it, time, tolerance):
+        self.population.sort(key=sort_by_fn, reverse = True) #se ordena descendiente segun f porque fn=1 es el mas apto (menor costo de camino)
         
-        for i in range(it): #por ahora puse este limite solamente, una vez vayamos entendiendo mejor podemos agregar un limite de tiempo o de tolerancia
-            
-            self.calculate_fitness()
-            
-            self.population.sort(key=sort_by_f)
-            
-            #self.calculate_pick_probability() no hace falta porque random.choices en pick_fittest lo hace solo
+        print(f"{self}")
+        
+    def GA(self, max_it, max_time, tolerance):
+        
+        lowest_avg_lengths = []
+        t0 = time.time()
+        it = 0
+        
+        while True:
             
             fittest = self.pick_fittest_individuals()
             
-            self.population = self.crossover_and_mutation(fittest)
+            self.population.extend(self.crossover_and_mutation(fittest))
             
+            self.calculate_fitness()
             
+            self.population.sort(key=sort_by_fn, reverse = True) #se tiene que ordenar la lista antes de remove_weakest()
+            
+            self.remove_weakest()
+            
+            self.calculate_fitness() #repito calculate fitness varias veces para recalcular los fn, que es una operacion corta en tiempo
+                                     #los f no se vuelven a calcular si ya tienen un valor asignado
+            
+            print(f"{self}")
+            
+            #criterios de finalizacion
+            
+            it += 1
+            t1 = time.time()
+            lowest_avg_lengths.append(self.population[0].f)
+            
+            if it > 10: #aca puse 10 para calcular el cambio entre el ultimo y el decimo ultimo
+                change = (lowest_avg_lengths[-10] - lowest_avg_lengths[-1])/lowest_avg_lengths[-10]
+            else:
+                change = 100
+            if it == max_it or t1-t0 > max_time or change < tolerance:
+                break
 
     def calculate_fitness(self):  #van a tener que estar normalizados y ordenados al reves (el de recorrido mas chico = 1, el de recorrido mas grande=0)
-        fsn=[] #fitnes sin normalizar
+        fsn=[] #fitness sin normalizar
         for individual in self.population:
-            if individual.fitness == -1: #valor de inicializacion, para no volver a calcular las f de los individuos que ya tienen
-                f_orders=[]
-                for order in orders: 
-                    _, total_path_length = self.annealing.simulated_annealing(order)
-                    f_order.append(total_path_length)
-                prom_path=sum(f_order)/len(f_order)
-                fsn.append(prom_path)
-                individual.set_f(prom_path)
-            max_path=max(fsn)
-            min_path=min(fsn)
-            for i in fsn:
-                individual.set_fn(normalize(i,min_path,max_path))
+            f_orders=[]
+            if individual.f == -1: #para que no se vuelva a hacer el calculo si ya se habia hecho para ese individuo
+                for order in self.orders:
+                    mapped_order = order.calculate_mapped_order(individual.genes, self.shelves) #mapea la orden segun el individuo
+                    _, total_path_length = self.annealing.simulated_annealing(mapped_order)     #calculo de pasos para cada orden
+                    f_orders.append(total_path_length)                                          #se guardan los pasos de cada orden para ese ind
+                self.warehouse.write_db_to_file() #se escribe en "memoria cache"
+                avg_path=sum(f_orders)/len(f_orders)
+                fsn.append(avg_path)
+                individual.set_f(avg_path)
+            else:
+                fsn.append(individual.f)
+        max_path=max(fsn)
+        min_path=min(fsn)
+        for individual, f_value in zip(self.population, fsn):         #como los valores mas aptos son los mas bajos, hay que invertir la escala
+            individual.set_fn(normalize(f_value, max_path, min_path)) #por eso mando min y max al reves que como esta en la func de normalizacion
+        
 
-    def calculate_pick_probability(self):
+    def calculate_pick_probability(self): #al final no se usa porque random.choices lo hace solo con weights en pick_fittest
         f_sum = 0
         for individual in self.population:
             f_sum += individual.f
@@ -52,27 +99,38 @@ class Gen:
             individual.set_p(p)
             
     def pick_fittest_individuals(self):
-        n = 2                                   #fraccion 1/n de la poblacion se va a tener en cuenta
-        k = len(self.population)/n
+        n = 5                               #fraccion 1/n de la poblacion se va a tener en cuenta
+        k = round(len(self.population)/n)
+        if k<2: k=2
         fitnesses = []
         for individual in self.population:
-            fitnesses.append(individual.f)
-        random.choices(self.population, weights = fitnesses, k=k) #weights aporta la probabilidad de elegir a cada individuo p[i]=f[i]/sum(f)
+            fitnesses.append(individual.fn)
+        fittest = random.choices(self.population, weights = fitnesses, k=k) #weights aporta la probabilidad de elegir a cada individuo p[i]=f[i]/sum(f)
+        
+        return fittest
+    
+    def remove_weakest(self):
+        excess_population = len(self.population) - self.population_length #en este paso la poblacion es de 20 + los que se generaron en crossover
+        temp_population = copy(self.population)
+        for idx in range(self.population_length, self.population_length + excess_population): #como la poblacion ya estaba ordenada, se sacan los sobrantes al final
+            individual_to_remove = temp_population[idx]
+            self.population.remove(individual_to_remove)
         
     def crossover_and_mutation(self, fittest_selection):
-        k = 2                                           #k= 1 con pmx, k=2 con crossover de ciclos u orden (cantidad de hijos que devuelve)
-        ammount_of_crossovers = len(self.population)/k
+        k=1 #variar segun la cantidad de crossovers que se quieran hacer, pmx larga 1 hijo y los otros largan de a 2
+        ammount_of_crossovers = int(len(self.population)/k)
         new_population = []
         
         for n in range(ammount_of_crossovers): #crossover
-            parent1 = random.choice(fittest_selection)
-            parent2 = random.choice(fittest_selection)
-            child1, child2 = self.order_crossover(parent1, parent2) #aca se puede variar el metodo de crossover, tambien hay que cambiar el k
-            new_population.append(child1)
-            new_population.append(child2)
+            parent1 = random.choice(fittest_selection).genes
+            parent2 = random.choice(fittest_selection).genes
+            child1 = self.partially_mapped_crossover(parent1, parent2) #aca se puede variar el metodo de crossover, tambien hay que cambiar el k
+            new_population.append(Individual(child1))
+            #new_population.append(Individual(child2))
         
         for individual in new_population: #mutacion
-            individual = self.insertion_mutation(individual) #aca se puede variar el metodo de mutacion
+            mutated_genes = self.insertion_mutation(individual.genes) #aca se puede variar el metodo de mutacion
+            individual = Individual(mutated_genes)
             
         return new_population
 
@@ -112,7 +170,7 @@ class Gen:
                 idx = i
                 while True:
                     idx = parent2.index(parent1[idx])  #esta es la accion de moverse verticalmente y despues buscar el indice de ese valor en el otro padre
-                    if idx < pointinit and idx >= pointfin: #cuando idx cae fuera del intervalo
+                    if idx < pointinit or idx >= pointfin: #cuando idx cae fuera del intervalo - ES UN OR, NO AND
                         child1[idx] = gene_value            #se inserta el gen elegido en ese lugar
                         break
         
@@ -206,11 +264,11 @@ class Gen:
         
         return individual
 
-def normalize(value, xi, xf):
-    return (value - xi)/(xf - xi)
+def normalize(value, xmin, xmax):
+    return (value - xmin)/(xmax - xmin)
         
-def sort_by_f(individual):
-    return individual.fitness
+def sort_by_fn(individual):
+    return individual.fn
 
 def two_point_crossover_init(parent1, parent2):
     n_genes= len(parent1)
@@ -233,7 +291,7 @@ class Individual:
     
     def __init__(self, genes):
         self.genes = genes
-        self.f = -1
+        self.f = -1     
         self.p = -1
         self.fn = -1
         
