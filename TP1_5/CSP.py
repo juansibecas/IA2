@@ -3,9 +3,8 @@
 class Graph:
     """
     Clase para crear el grafo de restriccion. Se necesitan:
-    _task: Diccionario con las tareas(variables) como Keys y su valor son la duracion de la tarea.
-    _ domain: Diccionario con las tareas(variables) como Keys y su valor son los valores q puede tomar.
-    _ neighbors: Diccionario con las tareas(variables) como Keys y su valor son las variables que tiene restriones.
+    _tasks: Diccionario con las tareas(variables) como Keys y su valor es una tupla con los valores q puede tomar,
+    variables que tiene restriones y tiempo de ejecución de la maquina. 
     _ assignment: Lista con la Tarea su maquina y hora de inicio
     """
     def __init__(self,total_time,tasks,assignment):
