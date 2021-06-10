@@ -13,6 +13,7 @@ class Gen:
         self.annealing = Annealing(temp_ini, temp_fin, alpha, warehouse)
         self.t0 = time.time()
         self.generation = -1
+        self.compare = 10
     
     def __str__(self):
         t1 = time.time()
@@ -62,8 +63,8 @@ class Gen:
             t1 = time.time()
             lowest_avg_lengths.append(self.population[0].f)
             
-            if it > 10: #aca puse 10 para calcular el cambio entre el ultimo y el decimo ultimo
-                change = (lowest_avg_lengths[-10] - lowest_avg_lengths[-1])/lowest_avg_lengths[-10]
+            if it > self.compare: #aca puse 10 para calcular el cambio entre el ultimo y el decimo ultimo
+                change = 100*(lowest_avg_lengths[-self.compare] - lowest_avg_lengths[-1])/lowest_avg_lengths[-self.compare]
             else:
                 change = 100
             if it == max_it or t1-t0 > max_time or change < tolerance:
@@ -117,8 +118,7 @@ class Gen:
             self.population.remove(individual_to_remove)
         
     def crossover_and_mutation(self, fittest_selection):
-        k=1 #variar segun la cantidad de crossovers que se quieran hacer, pmx larga 1 hijo y los otros largan de a 2
-        ammount_of_crossovers = int(len(self.population)/k)
+        ammount_of_crossovers = 20 #variar segun la cantidad de crossovers que se quieran hacer, pmx larga 1 hijo y los otros largan de a 2
         new_population = []
         
         for n in range(ammount_of_crossovers): #crossover

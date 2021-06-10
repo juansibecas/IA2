@@ -47,7 +47,7 @@ if __name__ == "__main__":
     
     population_length = 20
     max_it = 500
-    max_time_in_hours = 0.3
+    max_time_in_hours = 1
     tolerance = 1   #porcentual
     
     genetic_algorithm = Gen(population_length, warehouse, orders, temp_ini_annealing, temp_fin_annealing, alpha_annealing)
