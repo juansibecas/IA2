@@ -29,12 +29,12 @@ def run():
     path, path_len=astar.path(columns, rows)
     
     print("La posicion inicial es :")
-    print(finish)
-    print("La posicion final es :")
     print(start)
-    print("Camino recorrido:") #si no sale nada es porque se obtuvo el valor desde archivo
-    print("El camino más corto es:")
+    print("La posicion final es :")
+    print(finish)
+    print("El camino más corto es:") #si no sale nada es porque se obtuvo el valor desde archivo
     print(path)
+    print("distancia recorrida:")
     print(path_len)
     
     warehouse.clear_map()
