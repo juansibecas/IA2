@@ -37,32 +37,32 @@ class Astar:
         if db_check > 0: #chequea si ese caso ya esta calculado (cuando no esta calculado, devuelve -1)
             return 0, db_check
         
-        neighbours=[]  #guardaremos todos los vecinos de la posicion actual
-        nodes=[]    #guardaremos todos los nodos - ver class Nodo
+        neighbours=[]   #guardaremos todos los vecinos de la posicion actual
+        nodes=[]        #guardaremos todos los nodos - ver class Nodo
         f=0
         prev = Node(self.start, 0, 0, 0)
         g=0
 
         while True:
-            g+=1
             neighbours=self.warehouse.find_neighbours(prev.pos, self.finish)
             
-            if self.finish in neighbours:       #si el final esta dentro de los vecinos, se mueve a el y termina el programa. Llegamos  
-                prev = Node(self.finish, 0, 100, prev) #le pongo cualquier cosa que no sea 0 al nivel
+            if self.finish in neighbours:                   #si el final esta dentro de los vecinos, se mueve a el y termina el programa     
+                prev = Node(self.finish, 0, "end", prev)    #le pongo cualquier cosa que no sea 0 al nivel
                 break
             
             for j in range(len(neighbours)):
-                f=g+self.h_manhattan(neighbours[j], self.finish)      #calculamos la funcion f para cada vecino, g vale una unidad por cada movimiento
+                g = prev.level + 1
+                f= g + self.h_manhattan(neighbours[j], self.finish) #calculamos la funcion f para cada vecino, g vale una unidad por cada movimiento
                 nodes.append(Node(neighbours[j], f, g, prev))
             
-            nodes = delete_duplicates(nodes)  #aca hay que quitar duplicados, es decir, nodos de la misma posicion y con un valor igual de f
+            nodes = delete_duplicates(nodes)    #aca hay que quitar duplicados, es decir, nodos de la misma posicion y con un valor igual de f
             
-            nodes.sort(key=sort_by_f) #se ordena la lista de nodos de menor a mayor segun f
+            nodes.sort(key=sort_by_f)           #se ordena la lista de nodos de menor a mayor segun f
             
-            g = nodes[0].level #si el algoritmo vuelve a una rama anterior, vuelve el valor de g al original
+
             
             prev = copy(nodes[0])
-            nodes.pop(0)                    #eliminamos el valor actual de los nodos para que no se pueda volver a el   
+            nodes.pop(0)                        #eliminamos el valor actual de los nodos para que no se pueda volver a el   
             
                 
         path = []
@@ -72,7 +72,6 @@ class Astar:
         
         for i in path:
             self.warehouse.map[i[0], i[1]] = 1 #1 es por donde pasa
-        #print(self.warehouse.map)
         
         self.warehouse.write_to_db(self.start, self.finish, path_len)  #escribe lo calculado
         
