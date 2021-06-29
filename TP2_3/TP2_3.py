@@ -11,8 +11,8 @@ def run():
     ammount_of_membership_functions = 5 #se puede cambiar ajustando la tabla de rules a nxn. valores posibles 3, 5, 7
     overlap_percent = 50
     theta_max = math.pi/4
-    theta_speed_max = 1
-    f_max = 50
+    theta_speed_max = math.pi/6
+    f_max = 41
     N = 1000 #discretizacion en las funciones de pertenencia (se usa solamente para graficarlas)
     start = [-theta_max, -theta_speed_max, -f_max]
     end = [theta_max, theta_speed_max, f_max]
@@ -65,7 +65,7 @@ def run():
         
     t_max = 10
     dt = 0.0001
-    theta_0 = -45
+    theta_0 = 45
     v_0 = 0
     a_0 = 0
     
