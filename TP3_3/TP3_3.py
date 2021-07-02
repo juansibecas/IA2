@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 # CS231n Convolutional Neural Networks for Visual Recognition
 # (https://cs231n.github.io/neural-networks-case-study/)
 def generar_datos_clasificacion(cantidad_ejemplos, cantidad_clases):
-    FACTOR_ANGULO = 0.79
+    FACTOR_ANGULO = 0.2
     AMPLITUD_ALEATORIEDAD = 0.1
 
     # Calculamos la cantidad de puntos por cada clase, asumiendo la misma cantidad para cada 
@@ -126,6 +126,7 @@ def train(x, t, pesos, learning_rate, epochs, tol, x_val, t_val):
         #    subsiguientes)
         sum_exp_scores = np.sum(exp_scores, axis=1, keepdims=True)
         sum_exp_scores_val = np.sum(exp_scores_val, axis=1, keepdims=True)
+        
 
         # c. "Probabilidades": normalizacion de las exponenciales del score de cada clase (dividiendo por 
         #    la suma de exponenciales de todos los scores), fila por fila
@@ -245,7 +246,6 @@ def iniciar(numero_clases, numero_ejemplos, graficar_datos):
     
     precision = aciertos * 100 / len(t_test)
     print("Accuracy for test examples = ", precision)
-    
-    
 
-iniciar(numero_clases=3, numero_ejemplos=300, graficar_datos=True)
+    
+iniciar(numero_clases=7, numero_ejemplos=700, graficar_datos=True)
