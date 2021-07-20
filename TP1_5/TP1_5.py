@@ -8,7 +8,8 @@ def create_disc(task,machine,total_time):
     mac=0
     for m in range(len(machine)):  #guardamos las tareas dentro de cada tipo de maquina
         if machine[m][1] != mac:
-            machines.setdefault(machine[m][1],[])      
+            machines.setdefault(machine[m][1],[])
+            print(machines)     
     for i in task:              
         listneighbors=[]    #listas vacias para ir guardando los valores de los vecinos y dominio
         listdomain=[]
@@ -38,6 +39,7 @@ def csp(index,graph,total_time,tasks,assignment,list_not_use,machines):
             index=index+1
             variable=graph[index].heuristic_MRV(list_not_use[index-1],machines) #Elegimos la variable con menor dominios para elegir (heuristica)    
             tasks,assignment,flag_error,machines=graph[index].inference(variable,machines) #Borramos la variable eleiga y sus reestriciones con las demas y podamos el arbol
+            print(list_not_use)
             if flag_error==1:      #Backtracking: Si esa variable variable da a una solucion no valida hacemos backtracking
                 graph.pop()  #borramos el grafo ultimo y volvemos a asignar las variables anteriores para eliminar las erroneas
                 index=index-1
@@ -63,7 +65,7 @@ def csp(index,graph,total_time,tasks,assignment,list_not_use,machines):
     return index,tasks,assignment     
 
 if __name__ == '__main__':
-    task=[[1,10,1], [2,5,1],[3,18,1],[4,13,1],[5,1,2],[6,11,2],[7,10,2]] #Tareas de la forma: [ID, Duracion, Tipo de maquina]
+    task=[[1,10,1], [2,5,1],[3,17,1],[4,13,1],[5,1,2],[6,11,2],[7,10,2]] #Tareas de la forma: [ID, Duracion, Tipo de maquina]
     machine=[[1,1],[2,1],[3,2]] #Maquinas de la forma: [ID,Tipo de maquina]
     total_time=24               #Tomamos una produccion continua de 24 hs                    
     tasks,machines=create_disc(task,machine,total_time)

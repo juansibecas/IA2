@@ -20,7 +20,7 @@ class Graph:
             if var not in not_use:
                 nmachine=self.tasks[var][0][0][0]     #Numero de la maquina para luego comparar.
                 list_domain=[]
-                for value in self.tasks[var][0]:      
+                for value in self.tasks[var][0]:     
                     if value[0]==nmachine:           #Para separar las tareas que pueden usar dos maquinas
                         list_domain.append(value)
                         ndomain=len(list_domain)
